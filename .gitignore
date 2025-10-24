@@ -25,3 +25,8 @@ venv
 */**/*.profraw
 docker/secrets/*Cargo.lock
 Cargo.lock
+
+
+# Added by cargo
+
+/target

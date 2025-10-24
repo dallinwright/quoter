@@ -1,0 +1,23 @@
+services:
+  timescale_db:
+    image: timescale/timescaledb-ha:pg17
+    container_name: timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: password1234
+      POSTGRES_USER: catalog_user
+      POSTGRES_DB: catalog_db
+    volumes:
+      - timescale_db_data:/home/postgres/pgdata/data
+    networks:
+      - app
+    restart: unless-stopped
+
+volumes:
+  timescale_db_data:
+    driver: local
+
+networks:
+  app:
+    driver: bridge
