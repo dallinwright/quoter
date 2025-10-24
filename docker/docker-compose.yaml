@@ -1,22 +1,16 @@
 services:
-  timescale_db:
-    image: timescale/timescaledb-ha:pg17
-    container_name: timescaledb
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: local-mssql
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "1433:1433"
     environment:
-      POSTGRES_PASSWORD: password1234
-      POSTGRES_USER: catalog_user
-      POSTGRES_DB: catalog_db
-    volumes:
-      - timescale_db_data:/home/postgres/pgdata/data
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"  # Developer edition has full features for testing
     networks:
       - app
-    restart: unless-stopped
-
-volumes:
-  timescale_db_data:
-    driver: local
 
 networks:
   app:
