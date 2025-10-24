@@ -1,5 +1,6 @@
 terraform {
-  backend "azurerm" {} // configuration is provided by the backend.hcl for the env
+  # backend "azurerm" {} // configuration is provided by the backend.hcl for the env
+  backend "local" {} // for local dev without storage account
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
