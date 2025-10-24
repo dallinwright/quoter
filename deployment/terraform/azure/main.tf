@@ -22,4 +22,7 @@ resource "azurerm_resource_group" "rg_westus" {
   )
 }
 
-
+# For Hyperscale setup see databases.tf
+# For VNET setup, private endpoints, subnets, etc. see networking.tf
+# For AKS see a would be aks.tf. That is not trivial as entra-id is preferably needed, keyvault,
+# scalesets, etc along with RBAC. That is where the app would go.
