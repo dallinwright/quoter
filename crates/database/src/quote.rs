@@ -79,3 +79,47 @@ pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Opti
         Ok(None) // no quotes found for this author
     }
 }
+
+
+/// Select a quote by id for a given author
+pub async fn get_quote_by_id(
+    db_config: &DbConfig,
+    author: &str,
+    id: Uuid,
+) -> Result<Option<Quote>, Error> {
+    // Get a connection
+    let mut client = get_connection(db_config).await;
+
+    // Set session context for RLS (optional)
+    client
+        .execute(
+            "EXEC sp_set_session_context @key=N'user_name', @value=@P1",
+            &[&author],
+        )
+        .await?;
+
+    // Query quote by ID
+    let stream = client
+        .query(
+            "SELECT id, quote, author FROM dbo.quote WHERE author = @P1 AND id = @P2",
+            &[&author, &id],
+        )
+        .await?;
+
+    let mut row_stream = stream.into_row_stream();
+
+    if let Some(row) = row_stream.next().await {
+        let row: Row = row?;
+        let id: Uuid = row.get("id").expect("Couldn't get id");
+        let quote_text: &str = row.get("quote").expect("Couldn't get quote");
+        let author: &str = row.get("author").expect("Couldn't get author");
+
+        Ok(Some(Quote {
+            id,
+            author: author.to_string(),
+            quote: quote_text.to_string(),
+        }))
+    } else {
+        Ok(None) // no quote found
+    }
+}

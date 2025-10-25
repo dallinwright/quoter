@@ -20,7 +20,7 @@ INSERT INTO quote (author, quote) VALUES
     (N'Albert Camus', N'"The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion." - Albert Camus'),
     (N'Albert Camus', N'“Don’t walk in front of me… I may not follow. Don’t walk behind me… I may not lead. Walk beside me… just be my friend.” ― Albert Camus');
 
--- For example, view only Oscar Wilde's rows
+-- For example, view only Oscar Wilde's rows or for Albert Camus
 EXEC sp_set_session_context @key = N'user_name', @value = N'Albert Camus';
 GO
 SELECT * FROM quote;

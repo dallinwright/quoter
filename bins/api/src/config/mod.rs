@@ -1,10 +1,6 @@
 use std::env;
-use std::sync::Arc;
 use dotenvy::dotenv;
 use types::app_state::{AppState, DbConfig};
-use tiberius::{Client, Config, AuthMethod};
-use tokio::net::TcpStream;
-use tokio_util::compat::{Compat, TokioAsyncWriteCompatExt};
 
 fn safe_load_required_env_var(key: &str) -> String {
     env::var(key)
@@ -27,7 +23,8 @@ pub fn setup_baseline_telemetry(level: tracing::Level) {
 pub async fn load_app_state() -> AppState {
     dotenv().ok().unwrap_or_default();
 
-    setup_baseline_telemetry(tracing::Level::INFO);
+    let level = tracing::Level::DEBUG;
+    setup_baseline_telemetry(level);
 
     tracing::info!("Connecting to database...");
 
