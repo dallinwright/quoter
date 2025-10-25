@@ -45,3 +45,18 @@ variable "private_endpoint_subnet_id_eastus" {
 variable "sql_private_dns_zone_id" {
   type = string
 }
+
+variable "sql_version" {
+  type = string
+  default = "12.0"
+}
+
+variable "max_size_gb" {
+  type = number
+  default = 20
+}
+
+variable "grace_minutes" {
+  type = number
+  default = 60
+}
