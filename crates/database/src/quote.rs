@@ -1,9 +1,8 @@
-use chrono::{DateTime, NaiveDateTime, Utc};
 use futures::StreamExt;
-use tiberius::{AuthMethod, Client, Config, QueryItem, Row};
+use tiberius::{AuthMethod, Client, Config, Row};
 use tokio::net::TcpStream;
 use tokio_util::compat::{Compat, TokioAsyncWriteCompatExt};
-use types::app_state::{DbConfig};
+use types::app_state::DbConfig;
 use types::error::Error;
 use types::quote::Quote;
 use uuid::Uuid;
@@ -55,7 +54,7 @@ pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Opti
     ).await?;
 
     // Query a random quote (TOP 1 ORDER BY NEWID())
-    let mut stream = client
+    let stream = client
         .query(
             "SELECT TOP 1 id, quote, author FROM dbo.quote WHERE author = @P1 ORDER BY NEWID()",
             &[&author],

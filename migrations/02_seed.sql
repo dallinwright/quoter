@@ -16,11 +16,14 @@ INSERT INTO quote (author, quote) VALUES
     (N'Mahatma Gandhi', N'“Be the change that you wish to see in the world.” ― Mahatma Gandhi'),
     (N'Robert Frost', N'“In three words I can sum up everything I''ve learned about life: it goes on.” ― Robert Frost'),
     (N'J.K. Rowling', N'“If you want to know what a man''s like, take a good look at how he treats his inferiors, not his equals.” ― J.K. Rowling, Harry Potter and the Goblet of Fire'),
+    (N'Albert Camus', N'"In the depth of winter, I finally learned that within me there lay an invincible summer." ― Albert Camus'),
+    (N'Albert Camus', N'"The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion." - Albert Camus'),
     (N'Albert Camus', N'“Don’t walk in front of me… I may not follow. Don’t walk behind me… I may not lead. Walk beside me… just be my friend.” ― Albert Camus');
 
-
 -- For example, view only Oscar Wilde's rows
-EXEC sp_set_session_context @key = N'user_name', @value = N'Oscar Wilde';
+EXEC sp_set_session_context @key = N'user_name', @value = N'Albert Camus';
 GO
-
 SELECT * FROM quote;
+
+-- Get random quote
+SELECT TOP 1 id, quote, author FROM dbo.quote WHERE author = 'Albert Camus' ORDER BY NEWID();
