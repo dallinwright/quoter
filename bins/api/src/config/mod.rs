@@ -1,7 +1,9 @@
 use std::env;
 use dotenvy::dotenv;
-use sqlx::{Pool, Postgres};
 use types::app_state::AppState;
+use tiberius::{Client, Config, AuthMethod};
+use tokio::net::TcpStream;
+use tokio_util::compat::TokioAsyncWriteCompatExt;
 
 fn safe_load_required_env_var(key: &str) -> String {
     env::var(key)
@@ -28,16 +30,20 @@ pub async fn load_app_state() -> AppState {
 
     tracing::info!("Connecting to database...");
 
-    let db_pool = Pool::<Postgres>::connect(&safe_load_required_env_var("DATABASE_URL"))
-        .await
-        .expect("Failed to create database pool");
+    // Azure SQL connection details
+    let mut config = Config::new();
+    config.host("your-server-name.database.windows.net");
+    config.port(1433);
+    config.authentication(AuthMethod::sql_server("your-username", "your-password"));
+    config.trust_cert(); // Needed unless you validate certificates properly
+    config.database("your-database-name");
 
     tracing::info!("Connected to database");
 
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
 
+
     let state: AppState = AppState {
-        db_pool,
         port: port.parse().expect("PORT must be a number"),
     };
 

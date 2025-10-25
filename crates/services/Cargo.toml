@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 database = { workspace = true }
 types = { workspace = true }
-sqlx = { workspace = true }
 tracing = { workspace = true }
 uuid = { workspace = true }
+
+tiberius = { workspace = true }

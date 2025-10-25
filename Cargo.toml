@@ -3,4 +3,28 @@ name = "quoter"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace]
+members = ["bins/*", "crates/*"]
+
+[workspace.dependencies]
+database = { path = "./crates/database" }
+types = { path = "./crates/types" }
+services = { path = "./crates/services" }
+
+# observability
+tracing = { version = "0.1" }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+opentelemetry = { version = "0.30", features = ["trace", "metrics", "logs"] }
+opentelemetry-otlp = { version = "0.30", features = ["trace", "metrics", "logs", "serialize", "grpc-tonic", "http-json"] }
+
+chrono = { version = "0.4", features = ["serde"] }
+serde_json = { version = "1", features = ["default"] }
+serde = { version = "1", features = ["derive"] }
+dotenvy = "0.15"
+tokio = { version = "1", features = ["full"] }
+uuid = { version = "1", features = ["fast-rng", "serde", "v7", "v4"] }
+
+tokio-util = {  version = "0.7", features = ["compat"] }   # or 0.6
+
+tiberius = { version = "0.12", features = ["default"] }
+axum = { version = "0.8", features = ["tracing", "default", "json"]}

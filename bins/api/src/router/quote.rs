@@ -4,7 +4,7 @@ use axum::Json;
 use axum::response::IntoResponse;
 use types::app_state::AppState;
 use types::error::{Error};
-use types::product::Product;
+use types::quote::Quote;
 
 #[tracing::instrument(skip(app_state))]
 pub(crate) async fn get_quote_route(
@@ -13,10 +13,10 @@ pub(crate) async fn get_quote_route(
 ) -> Result<impl IntoResponse, Error> {
     tracing::debug!("routing get product: code={code}");
 
-    let try_product: Result<Product, Error> = services::product::get_product(&app_state.db_pool, &code)
-        .await;
+    // let try_data: Result<Quote, Error> = services::quote::get_quote(&app_state.db_pool, &code)
+    //     .await;
+    //
+    // let data = try_data?;
 
-    let product = try_product?;
-
-    Ok((StatusCode::OK, Json(product)))
+    Ok((StatusCode::OK, Json("")))
 }

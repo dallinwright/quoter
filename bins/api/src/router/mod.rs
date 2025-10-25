@@ -3,6 +3,8 @@ use axum::routing::{get, post, put};
 use types::app_state::AppState;
 pub mod quote;
 
+use crate::router::quote::get_quote_route;
+
 pub fn build_router(app_state: AppState) -> Router {
     Router::new()
         // Product routes

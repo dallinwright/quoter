@@ -1,7 +1,8 @@
+-- MSSQL format
 CREATE TABLE quote
 (
-    id UUID NOT NULL PRIMARY KEY,
-    author         TEXT        NOT NULL,
-    quote  TEXT        NOT NULL,
-    create_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    author NVARCHAR(MAX) NOT NULL,
+    quote NVARCHAR(MAX) NOT NULL,
+    created_at DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
 );

@@ -34,23 +34,6 @@ variable "env" {
   type = string
 }
 
-variable "grace_minutes" {
-  default = 15 # how long before azure promotes secondary to primary
-  type = number
-}
-
-variable "max_size_gb" {
-  description = "Max size for the DB"
-  type        = number
-  default     = 1024
-}
-
-variable "sql_version" {
-  description = "SQL server version"
-  type        = string
-  default     = "12.0"
-}
-
 variable "private_endpoint_subnet_id_westus" {
   type = string
 }

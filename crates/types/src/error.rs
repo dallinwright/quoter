@@ -39,16 +39,8 @@ impl IntoResponse for Error {
             ErrorType::InvalidInput => StatusCode::BAD_REQUEST,
             ErrorType::NotFound => StatusCode::NOT_FOUND,
             ErrorType::TimeoutError => StatusCode::REQUEST_TIMEOUT,
-            ErrorType::CancelError => StatusCode::REQUEST_TIMEOUT,
-            ErrorType::QuoteError => StatusCode::BAD_REQUEST,
-            ErrorType::OrderError => StatusCode::BAD_REQUEST,
-            ErrorType::ChannelError | ErrorType::ChannelClosed => StatusCode::INTERNAL_SERVER_ERROR,
             ErrorType::HttpError => StatusCode::BAD_REQUEST,
-            ErrorType::CreateError => StatusCode::BAD_REQUEST,
-            ErrorType::UpdateError => StatusCode::BAD_REQUEST,
-            ErrorType::DeleteError => StatusCode::BAD_REQUEST,
-            ErrorType::GetError => StatusCode::BAD_REQUEST,
-            ErrorType::DatabaseError | ErrorType::InternalError | ErrorType::ThirdPartyError | ErrorType::IoError => StatusCode::INTERNAL_SERVER_ERROR,
+            ErrorType::DatabaseError | ErrorType::InternalError | ErrorType::ThirdPartyError => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
         let body = json!({
