@@ -10,3 +10,6 @@ uuid = { workspace = true }
 tracing = { workspace = true }
 
 tiberius = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+futures = "0.3.31"

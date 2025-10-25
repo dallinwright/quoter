@@ -1,9 +1,10 @@
 use std::env;
+use std::sync::Arc;
 use dotenvy::dotenv;
-use types::app_state::AppState;
+use types::app_state::{AppState, DbConfig};
 use tiberius::{Client, Config, AuthMethod};
 use tokio::net::TcpStream;
-use tokio_util::compat::TokioAsyncWriteCompatExt;
+use tokio_util::compat::{Compat, TokioAsyncWriteCompatExt};
 
 fn safe_load_required_env_var(key: &str) -> String {
     env::var(key)
@@ -30,20 +31,26 @@ pub async fn load_app_state() -> AppState {
 
     tracing::info!("Connecting to database...");
 
-    // Azure SQL connection details
-    let mut config = Config::new();
-    config.host("your-server-name.database.windows.net");
-    config.port(1433);
-    config.authentication(AuthMethod::sql_server("your-username", "your-password"));
-    config.trust_cert(); // Needed unless you validate certificates properly
-    config.database("your-database-name");
+    let db_user = safe_load_required_env_var("DATABASE_USER");
+    let db_host = safe_load_required_env_var("DATABASE_HOST");
+    let db_port = safe_load_required_env_var("DATABASE_PORT").parse::<u16>().expect("DATABASE_PORT must be set");
+    let db_name = safe_load_required_env_var("DATABASE_NAME");
+    let db_password = safe_load_required_env_var("DATABASE_PASSWORD");
 
     tracing::info!("Connected to database");
 
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
 
+    let db_config = DbConfig {
+        user: db_user,
+        host: db_host,
+        port: db_port,
+        password: db_password,
+        name: db_name,
+    };
 
     let state: AppState = AppState {
+        db_config,
         port: port.parse().expect("PORT must be a number"),
     };
 
