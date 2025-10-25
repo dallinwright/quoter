@@ -57,7 +57,7 @@ pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Opti
     // Query a random quote (TOP 1 ORDER BY NEWID())
     let mut stream = client
         .query(
-            "SELECT TOP 1 id, quote, author, created_at FROM dbo.quote WHERE author = @P1 ORDER BY NEWID()",
+            "SELECT TOP 1 id, quote, author FROM dbo.quote WHERE author = @P1 ORDER BY NEWID()",
             &[&author],
         )
         .await?;
@@ -71,16 +71,10 @@ pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Opti
         let quote_text: &str = row.get(1).expect("Couldn't get quote_text");
         let author: &str = row.get(2).expect("Couldn't get author");
 
-        // Fetch created_at as TDS datetime
-        let created_tds: tiberius::time::DateTime = row.get("created_at").unwrap();
-        let created_naive = created_tds.into(); // TDS -> NaiveDateTime
-        let created_at: DateTime<Utc> = DateTime::<Utc>::from_utc(created_naive, Utc);
-
         Ok(Some(Quote {
             id,
             author: author.to_string(),
             quote: quote_text.to_string(),
-            created_at: Default::default(),
         }))
     } else {
         Ok(None) // no quotes found for this author

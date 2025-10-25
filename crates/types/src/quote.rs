@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 /// Represents a row in the `quote` table
@@ -6,6 +5,5 @@ use uuid::Uuid;
 pub struct Quote {
     pub id: Uuid,
     pub author: String,
-    pub quote: String,
-    pub created_at: DateTime<Utc>,
+    pub quote: String
 }
