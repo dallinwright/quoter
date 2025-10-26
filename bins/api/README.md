@@ -18,6 +18,21 @@ I also am the most proficient at Rust, and I have a lot of experience with it th
 
 Actual authentication and authorization would be handled typically via JWT and Outh. This is outside the scope of the demo, but I included a pseudo authentication hook to show that it is possible and how it would be done, and also showcase how to use row level security is Mssql.
 
+In a real JWT, you would use the UserID and optionally the roles/claims from a decoded and validated token like this:
+
+```json
+{
+  "iss": "https://auth.example.com/",
+  "sub": "f21c247d-e82c-4a28-898a-e81d6730bbc7",
+  "aud": "api.myapp.com",
+  "exp": 1734050500,
+  "iat": 1734046900,
+  "email": "johndoe@example.com",
+  "roles": ["admin", "user"],
+  "name": "John Doe"
+}
+```
+
 ### Database
 
 Azure SQL Database. I used the local docker compose file to run the database locally.
@@ -55,3 +70,13 @@ cargo run --package api --bin api
 Make sure to run the database seeding script before running the API, execute against the running database instance the two `sql` scripts in the `migrations` directory.
 
 ## Demo 
+
+### Access Denied for someone elses random quote. Due to row level security, no data is returned.
+
+![Access Denied for someone elses random quote](../../docs/images/QuoteDenied.png)
+
+### Working Random Quote for a given author (PII data simulation to authors only can access their own random quotes)
+
+![Working Quote for a given author](../../docs/images/Quote1.png)
+![Working Quote for a given author 2](../../docs/images/Quote2.png)
+![Working Quote for a given author](../../docs/images/QuoteFrost.png)
