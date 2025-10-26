@@ -1,8 +1,8 @@
 # Quoter Demo
 
-Welcome to the demo quoter API. For specifics reference additional documentation links:
+Welcome to the demo quoter API. For specifics reference additional project documentation links:
 
-* [Terraform Example](./deployment/README.md)
+* [Terraform Documentation](./deployment/README.md)
 * [API Documentation](./bins/api/README.md)
 * [Database Documentation](./migrations/README.md)
 
