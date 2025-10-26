@@ -16,3 +16,5 @@ uuid = { workspace = true }
 
 tiberius = { workspace = true }
 tokio-util = { workspace = true }
+serde = { version = "1.0.228", features = ["derive"] }
+headers = "0.4.1"

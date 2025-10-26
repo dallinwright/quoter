@@ -3,6 +3,7 @@ use std::fmt::{Display, Formatter};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use serde_json::json;
+use crate::error::ErrorType::DatabaseError;
 
 /// This enum is used to categorize errors that occur in the application and provide a consistent
 /// way to handle and report errors. Each error type has a corresponding message that can be used.
@@ -88,6 +89,16 @@ impl From<axum::http::Error> for Error {
     fn from(err: axum::http::Error) -> Self {
         Error {
             error_type: ErrorType::HttpError,
+            message: format!("{err:?}")
+        }
+    }
+}
+
+
+impl From<tiberius::error::Error> for Error {
+    fn from(err: tiberius::error::Error) -> Self {
+        Error {
+            error_type: DatabaseError,
             message: format!("{err:?}")
         }
     }
