@@ -7,7 +7,27 @@ use types::error::Error;
 use types::quote::Quote;
 use uuid::Uuid;
 
-// In theory use a connection pool or something like PgBouncer but for mssql.
+/// Establishes a TDS connection to Azure SQL using tiberius over Tokio TCP.
+///
+/// The connection is created for each call; consider using a pool for production workloads.
+///
+/// Parameters:
+/// - `db_config`: Database connection settings (host, port, user, password, database name).
+///
+/// Returns:
+/// - `Client<Compat<TcpStream)>`: An authenticated Tiberius client wrapped for Tokio I/O.
+///
+/// Panics:
+/// - If DNS resolution or TCP connection fails.
+/// - If TDS login fails.
+///
+/// Example:
+/// ```rust
+/// # async fn demo(cfg: types::app_state::DbConfig) {
+/// let client = get_connection(&cfg).await;
+/// // use `client` to run queries...
+/// # }
+/// ```
 pub async fn get_connection(db_config: &DbConfig) -> Client<Compat<TcpStream>> {
     // Azure SQL connection details
     let mut config = Config::new();
@@ -22,10 +42,35 @@ pub async fn get_connection(db_config: &DbConfig) -> Client<Compat<TcpStream>> {
     client
 }
 
-/// Insert a quote into the database
+/// Inserts a new quote row with a generated UUID, applying session context for RLS.
 ///
-/// This is how to set the row level security and store a quote in the DB. You could optionally call
-/// the utils module to use the encryption functions to store the data encrypted in the DB.
+/// Sets `sp_set_session_context` with the quote author for Row-Level Security,
+/// then inserts into `dbo.quote (id, author, quote)`.
+///
+/// Parameters:
+/// - `db_config`: Database connection settings.
+/// - `quote`: The quote payload (author, quote text).
+///
+/// Returns:
+/// - `Ok(())` on success.
+/// - `Err(Error)` if the command execution fails.
+///
+/// Notes:
+/// - Consider connection pooling for concurrent/throughput-heavy scenarios.
+/// - Ensure the target table and RLS policy exist.
+///
+/// Example:
+/// ```rust
+/// # async fn demo(cfg: types::app_state::DbConfig) -> Result<(), types::error::Error> {
+/// let q = types::quote::Quote {
+///     id: uuid::Uuid::nil(), // ignored; new UUID is generated in the function
+///     author: "Ada Lovelace".into(),
+///     quote: "That brain of mine is something more than merely mortal.".into(),
+/// };
+/// insert_quote(&cfg, q).await?;
+/// # Ok(())
+/// # }
+/// ```
 pub async fn insert_quote(db_config: &DbConfig, quote: Quote) -> Result<(), Error> {
     // Lock the client for this operation
     // This is potentially problematic
@@ -47,7 +92,28 @@ pub async fn insert_quote(db_config: &DbConfig, quote: Quote) -> Result<(), Erro
     Ok(())
 }
 
-/// Select a random quote for a given author
+/// Fetches a random quote for the given author using `TOP 1 ... ORDER BY NEWID()`.
+///
+/// Sets session context for RLS and returns one random row if available.
+///
+/// Parameters:
+/// - `db_config`: Database connection settings.
+/// - `author`: Author name used both for RLS context and filtering.
+///
+/// Returns:
+/// - `Ok(Some(Quote))` if a quote exists for the author.
+/// - `Ok(None)` if no quotes are found.
+/// - `Err(Error)` if the query or row decoding fails.
+///
+/// Example:
+/// ```rust
+/// # async fn demo(cfg: types::app_state::DbConfig) -> Result<(), types::error::Error> {
+/// if let Some(q) = get_random_quote(&cfg, "Ada Lovelace").await? {
+///     assert_eq!(q.author, "Ada Lovelace");
+/// }
+/// # Ok(())
+/// # }
+/// ```
 pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Option<Quote>, Error> {
     let mut client = get_connection(db_config).await;
 
@@ -85,7 +151,27 @@ pub async fn get_random_quote(db_config: &DbConfig, author: &str) -> Result<Opti
 }
 
 
-/// Select a quote by id for a given author
+/// Retrieves a specific quote by UUID for the given author, honoring RLS.
+///
+/// Parameters:
+/// - `db_config`: Database connection settings.
+/// - `author`: Author name used for RLS context and filtering.
+/// - `id`: Quote UUID.
+///
+/// Returns:
+/// - `Ok(Some(Quote))` if the row exists and is visible under RLS.
+/// - `Ok(None)` if not found.
+/// - `Err(Error)` if the query or row decoding fails.
+///
+/// Example:
+/// ```rust
+/// # async fn demo(cfg: types::app_state::DbConfig, id: uuid::Uuid) -> Result<(), types::error::Error> {
+/// if let Some(q) = get_quote_by_id(&cfg, "Ada Lovelace", id).await? {
+///     assert_eq!(q.id, id);
+/// }
+/// # Ok(())
+/// # }
+/// ```
 pub async fn get_quote_by_id(
     db_config: &DbConfig,
     author: &str,
