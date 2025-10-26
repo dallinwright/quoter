@@ -14,8 +14,6 @@ services = { path = "./crates/services" }
 # observability
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-opentelemetry = { version = "0.30", features = ["trace", "metrics", "logs"] }
-opentelemetry-otlp = { version = "0.30", features = ["trace", "metrics", "logs", "serialize", "grpc-tonic", "http-json"] }
 
 chrono = { version = "0.4", features = ["serde"] }
 serde_json = { version = "1", features = ["default"] }
@@ -28,3 +26,8 @@ tokio-util = {  version = "0.7", features = ["compat"] }   # or 0.6
 
 tiberius = { version = "0.12", features = ["default", "chrono"] }
 axum = { version = "0.8", features = ["tracing", "default", "json"]}
+aes-gcm = "0.10.3" # or latest
+rand = "0.9.2"
+base64 = "0.22.1"
+hex = { version = "0.4.3"}
+futures = { version = "0.3.31 "}

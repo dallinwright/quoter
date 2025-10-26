@@ -22,6 +22,10 @@ pub async fn get_connection(db_config: &DbConfig) -> Client<Compat<TcpStream>> {
     client
 }
 
+/// Insert a quote into the database
+///
+/// This is how to set the row level security and store a quote in the DB. You could optionally call
+/// the utils module to use the encryption functions to store the data encrypted in the DB.
 pub async fn insert_quote(db_config: &DbConfig, quote: Quote) -> Result<(), Error> {
     // Lock the client for this operation
     // This is potentially problematic
